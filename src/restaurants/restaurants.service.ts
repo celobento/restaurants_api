@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Query as ExpressQuery } from 'express-server-static-core';
+import * as mongoose from 'mongoose';
 import { Restaurant } from './schemas/restaurant.schema';
-import * as  mongoose from 'mongoose'
 
 @Injectable()
 export class RestaurantsService {
@@ -11,11 +12,15 @@ export class RestaurantsService {
     ){}
 
     // get all restaurant => GET /restaurant
-    async findAll(): Promise<Restaurant[]> {
-
-        const restaurants = await this.restaurantModel.find();
+    async findAll(query: ExpressQuery): Promise<Restaurant[]> {
+        const keyword = query.keyword ? {
+            name: {
+                $regex: query.keyword,
+                $options: 'i'
+            }
+        }: {}
+        const restaurants = await this.restaurantModel.find({ ...keyword });
         return restaurants;
-
     }
 
     // create new restaurant => POST /restaurants
@@ -23,4 +28,29 @@ export class RestaurantsService {
         const res = await this.restaurantModel.create(restaurant)
         return res
     }
+
+    // Get a restaurant by ID => GET /restaurant/:id
+    async findById(id: String): Promise<Restaurant> {
+        const restaurant = await this.restaurantModel.findById(id)
+
+        if(!restaurant) {
+            throw new NotFoundException('REstaurant not found.')
+        }
+
+        return restaurant
+    }
+
+    // Update restaurant by ID => PUT /restaurant/:id
+    async updateById(id: string, restaurant: Restaurant): Promise<Restaurant> {
+        return await this.restaurantModel.findByIdAndUpdate(id, restaurant, {
+            new: true,
+            runValidators: true
+        })
+    }
+
+    // Delete a restaurant by ID => DELETE /restaurant/:id
+    async deleteById(id: String): Promise<Restaurant> {
+        return await this.restaurantModel.findByIdAndDelete(id)
+    }
+
 }
