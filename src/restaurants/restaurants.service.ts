@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import * as mongoose from 'mongoose';
@@ -13,13 +13,21 @@ export class RestaurantsService {
 
     // get all restaurant => GET /restaurant
     async findAll(query: ExpressQuery): Promise<Restaurant[]> {
+
+        const resPerPage = 2
+        const currentpage = Number(query.page) || 1
+        const skip = resPerPage * (currentpage -1)
+
         const keyword = query.keyword ? {
             name: {
                 $regex: query.keyword,
                 $options: 'i'
             }
         }: {}
-        const restaurants = await this.restaurantModel.find({ ...keyword });
+        const restaurants = await this.restaurantModel
+            .find({ ...keyword })
+            .limit(resPerPage)
+            .skip(skip);
         return restaurants;
     }
 
@@ -31,6 +39,13 @@ export class RestaurantsService {
 
     // Get a restaurant by ID => GET /restaurant/:id
     async findById(id: String): Promise<Restaurant> {
+
+        const isValidId = mongoose.isValidObjectId(id)
+
+        if (!isValidId) {
+            throw new BadRequestException('Wrong ID')
+        }
+
         const restaurant = await this.restaurantModel.findById(id)
 
         if(!restaurant) {
