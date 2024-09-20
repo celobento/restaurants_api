@@ -1,5 +1,6 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsPhoneNumber, IsString } from "class-validator"
+import { IsEmail, IsEnum, IsNotEmpty, IsPhoneNumber, IsString, ValidationArguments } from "class-validator"
 import { Category } from "../schemas/restaurant.schema"
+import { BadRequestException, InternalServerErrorException } from "@nestjs/common"
 
 export class CreateRestaurantDto {
 
@@ -16,8 +17,16 @@ export class CreateRestaurantDto {
     readonly email: string
 
     @IsNotEmpty()
-    @IsPhoneNumber('US')
-    readonly phoneNumber: number
+    //@IsPhoneNumber('US', {
+    //    message: (args: ValidationArguments) => {
+    //        if (args.value.length !== 15) {
+    //            throw new BadRequestException(`${args.value} Wrong Phone Number`);
+    //        } else {
+    //            throw new InternalServerErrorException();
+    //        }
+    //    },
+    //})
+    readonly phoneNumber: string
     
     @IsNotEmpty()
     @IsString()

@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { RestaurantsService } from './restaurants.service';
 import { Restaurant } from './schemas/restaurant.schema';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 @Controller('restaurants')
 export class RestaurantsController {
     constructor(private restaurantsService: RestaurantsService){}
@@ -38,14 +39,46 @@ export class RestaurantsController {
     @Delete(':id')
     async deleteRestaurant(@Param('id') id: string): Promise<{deleted: Boolean}> {
         // first I search by ID to confirm that this exists
-        await this.restaurantsService.findById(id)
+        const restaurant = await this.restaurantsService.findById(id)
 
-        const restaurant = this.restaurantsService.deleteById(id)
-        if(restaurant) {
+        const isDeleted = this.restaurantsService.deleteImages(restaurant.images)
+
+        if(isDeleted) {
+            this.restaurantsService.deleteById(id)
             return {
                 deleted: true
             }
+        } else {
+            return {
+                deleted: false
+            }
         }
+
         
     }
+    
+    // to unique upload
+    @Put('upload/:id')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadFile(
+        @UploadedFile() file: Express.Multer.File,
+        @Param('id') id: string
+    ) {
+        console.log(id + " | " + file);
+    }
+    
+    // to mult upload
+    @Put('uploads/:id')
+    @UseInterceptors(FilesInterceptor('files'))
+    async uploadFiles(
+        @UploadedFiles() files: Array<Express.Multer.File>,
+        @Param('id') id: string
+    ) {
+        //console.log(id + " | " + files);
+        await this.restaurantsService.findById(id)
+
+        const res = await this.restaurantsService.uploadImages(id, files)
+        return res
+    }
+
 }

@@ -19,7 +19,7 @@ export class Restaurant {
     email: string
 
     @Prop()
-    phoneNumber: number
+    phoneNumber: string
 
     @Prop()
     address: string

@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import * as mongoose from 'mongoose';
 import { Restaurant } from './schemas/restaurant.schema';
+import APIFeatures from 'src/utils/apiFeatures.util';
+import { ignoreElements } from 'rxjs';
 
 @Injectable()
 export class RestaurantsService {
@@ -66,6 +68,27 @@ export class RestaurantsService {
     // Delete a restaurant by ID => DELETE /restaurant/:id
     async deleteById(id: String): Promise<Restaurant> {
         return await this.restaurantModel.findByIdAndDelete(id)
+    }
+
+    // upload images => PUT /restaurant/uploads/:id
+    async uploadImages(id, files) {
+        const images = await APIFeatures.upload(files)
+        //console.log(images)
+        const restaurant = await this.restaurantModel.findByIdAndUpdate(id, {
+            images: images as Object[]
+        }, {
+            new: true,
+            runValidators: true
+        })
+        //return images
+        return restaurant
+    }
+
+    async deleteImages(images) {
+        // if restaurant dont have any image
+        if(images.length === 0) return true
+        const res = await APIFeatures.deleteImages(images)
+        return res
     }
 
 }
