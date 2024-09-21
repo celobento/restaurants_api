@@ -1,15 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { RestaurantsService } from './restaurants.service';
 import { Restaurant } from './schemas/restaurant.schema';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
 @Controller('restaurants')
 export class RestaurantsController {
     constructor(private restaurantsService: RestaurantsService){}
     
     @Get()
+    @UseGuards(AuthGuard())
     async getAllRestaurants(@Query() query: ExpressQuery): Promise<Restaurant[]> {
         return this.restaurantsService.findAll(query);
     }
