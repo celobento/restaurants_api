@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors} from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, Param, Post, Put, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors} from '@nestjs/common';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
@@ -42,20 +42,35 @@ export class RestaurantsController {
     }
 
     @Put(':id')
-    async updateRestaurant(@Param('id') id: string, @Body() restaurant: UpdateRestaurantDto): Promise<Restaurant> {
+    @UseGuards(AuthGuard())
+    async updateRestaurant(
+        @Param('id') id: string, 
+        @Body() restaurant: UpdateRestaurantDto,
+        @CurrentUser() user: User): Promise<Restaurant> {
         // first I search by ID to confirm that this exists
-        await this.restaurantsService.findById(id)
+        const rest = await this.restaurantsService.findById(id)
+
+        if(rest.user.toString() !== user._id.toString()) {
+            throw new ForbiddenException('You can not update this restaurant')
+        }
 
         return this.restaurantsService.updateById(id, restaurant)
         
     }
 
     @Delete(':id')
-    async deleteRestaurant(@Param('id') id: string): Promise<{deleted: Boolean}> {
+    async deleteRestaurant(
+        @Param('id') id: string,
+        @CurrentUser() user: User): Promise<{deleted: Boolean}> {
         // first I search by ID to confirm that this exists
-        const restaurant = await this.restaurantsService.findById(id)
+        const rest = await this.restaurantsService.findById(id)
 
-        const isDeleted = this.restaurantsService.deleteImages(restaurant.images)
+        if(rest.user.toString() !== user._id.toString()) {
+            throw new ForbiddenException('You can not delete this restaurant')
+        }
+
+
+        const isDeleted = this.restaurantsService.deleteImages(rest.images)
 
         if(isDeleted) {
             this.restaurantsService.deleteById(id)
