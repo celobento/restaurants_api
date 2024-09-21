@@ -1,6 +1,7 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsPhoneNumber, IsString, ValidationArguments } from "class-validator"
+import { IsEmail, IsEmpty, IsEnum, IsNotEmpty, IsPhoneNumber, IsString, ValidationArguments } from "class-validator"
 import { Category } from "../schemas/restaurant.schema"
 import { BadRequestException, InternalServerErrorException } from "@nestjs/common"
+import { User } from "src/auth/schemas/use.schema"
 
 export class CreateRestaurantDto {
 
@@ -35,4 +36,7 @@ export class CreateRestaurantDto {
     @IsNotEmpty()
     @IsEnum(Category, {message : 'Plase enter correct category'})
     readonly category: Category;
+
+    @IsEmpty({ message: 'You cannot provide the user ID.'})
+    readonly user: User;
 }

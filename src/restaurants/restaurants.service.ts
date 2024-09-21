@@ -5,6 +5,7 @@ import * as mongoose from 'mongoose';
 import { Restaurant } from './schemas/restaurant.schema';
 import APIFeatures from 'src/utils/apiFeatures.util';
 import { ignoreElements } from 'rxjs';
+import { User } from 'src/auth/schemas/use.schema';
 
 @Injectable()
 export class RestaurantsService {
@@ -34,8 +35,10 @@ export class RestaurantsService {
     }
 
     // create new restaurant => POST /restaurants
-    async create(restaurant: Restaurant): Promise<Restaurant> {
-        const res = await this.restaurantModel.create(restaurant)
+    async create(restaurant: Restaurant, user: User): Promise<Restaurant> {
+
+        const data = Object.assign(restaurant, {user: user._id})
+        const res = await this.restaurantModel.create(data)
         return res
     }
 

@@ -24,10 +24,12 @@ export class RestaurantsController {
     }
 
     @Post()
+    @UseGuards(AuthGuard())
     async createRestaurant(
-        @Body() restaurant: CreateRestaurantDto
+        @Body() restaurant: CreateRestaurantDto,
+        @CurrentUser() user: User
     ): Promise<Restaurant> {
-        return this.restaurantsService.create(restaurant)
+        return this.restaurantsService.create(restaurant, user)
 
     }
 
