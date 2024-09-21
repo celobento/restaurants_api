@@ -1,3 +1,4 @@
+import { JwtService } from "@nestjs/jwt";
 import { S3 } from "aws-sdk"
 
 export default class APIFeatures {
@@ -57,17 +58,25 @@ export default class APIFeatures {
             }
         }
 
-    return new Promise((resolve, reject) => {
-        s3.deleteObjects(params, function(err, data) {
-            if(err) {
-                console.log(err)
-                reject(false)
-            } else {
-                resolve(true)
-            }
+        return new Promise((resolve, reject) => {
+            s3.deleteObjects(params, function(err, data) {
+                if(err) {
+                    console.log(err)
+                    reject(false)
+                } else {
+                    resolve(true)
+                }
+            })
         })
-    })
 
     }
-
+        
+    static async assignJwtToken(
+        userId: string,
+        jwtService: JwtService
+    ): Promise<string> {
+        const payload = { id: userId}
+        const token = await jwtService.sign(payload)
+        return token
+    }
 }
