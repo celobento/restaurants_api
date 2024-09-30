@@ -13,6 +13,7 @@ import { AuthModule } from 'src/auth/auth.module';
     {name: 'Restaurant', schema:  RestaurantSchema}
   ])],
   controllers: [RestaurantsController],
-  providers: [RestaurantsService]
+  providers: [RestaurantsService],
+  exports: [MongooseModule]
 })
 export class RestaurantsModule {}
