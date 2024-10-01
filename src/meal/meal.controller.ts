@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { MealService } from './meal.service';
 import { Meal } from './schema/meal.schema';
 import { CreateMealDto } from './dto/meal.dto';
@@ -43,5 +43,15 @@ export class MealController {
             throw new ForbiddenException('You can not update this meal')
         }
         return this.mealService.updateMeal(id, updateMealDto)
+    }
+
+    @Delete(':id')
+    @UseGuards(AuthGuard())
+    async deleteMeal(@Param('id') id: string, @CurrentUser() user: User): Promise<{deleted: boolean}> {
+        const meal = await this.mealService.findById(id)
+        if(meal.user.toString() != user._id.toString()) {
+            throw new ForbiddenException('You can not update this meal')
+        }
+        return this.mealService.deleteMeal(id)
     }
 }
