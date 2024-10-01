@@ -27,7 +27,7 @@ export class RestaurantsController {
 
     @Post()
     @UseGuards(AuthGuard(), RolesGuard)
-    @Roles('admin')
+    @Roles('admin', "user")
     async createRestaurant(
         @Body() restaurant: CreateRestaurantDto,
         @CurrentUser() user: User

@@ -43,18 +43,18 @@ export class RestaurantsService {
     }
 
     // Get a restaurant by ID => GET /restaurant/:id
-    async findById(id: String): Promise<Restaurant> {
+    async findById(id: string): Promise<Restaurant> {
 
         const isValidId = mongoose.isValidObjectId(id)
 
         if (!isValidId) {
             throw new BadRequestException('Wrong ID')
         }
-
+        
         const restaurant = await this.restaurantModel.findById(id)
 
         if(!restaurant) {
-            throw new NotFoundException('REstaurant not found.')
+            throw new NotFoundException('REstaurant not found. Id: ' + id)
         }
 
         return restaurant

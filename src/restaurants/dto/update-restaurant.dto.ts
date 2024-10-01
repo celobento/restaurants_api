@@ -5,6 +5,7 @@ import { User } from "src/auth/schemas/use.schema"
 
 export class UpdateRestaurantDto {
 
+
     @IsString()
     @IsOptional()
     readonly name: string

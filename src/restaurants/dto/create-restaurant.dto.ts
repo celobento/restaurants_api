@@ -5,6 +5,7 @@ import { User } from "src/auth/schemas/use.schema"
 
 export class CreateRestaurantDto {
 
+
     @IsNotEmpty()
     @IsString()
     readonly name: string
