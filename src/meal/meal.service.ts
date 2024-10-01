@@ -14,6 +14,16 @@ export class MealService {
         private restaurantModel: mongoose.Model<Restaurant>,
     ){}
 
+    async getAll(): Promise<Meal[]> {
+        const meals = await this.mealModel.find()
+        return meals
+    }
+
+    async findByRestaurant(id: string): Promise<Meal[]> {
+        const meal = await this.mealModel.find({restaurant: id})
+        return meal
+    }
+
     // create a new meal => POST /meals/:restaurant
     async create(meal: Meal, user: User): Promise<Meal> {
         const data = Object.assign(meal, { user: user._id})
