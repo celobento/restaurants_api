@@ -95,4 +95,27 @@ describe('RestaurantController (e2e)', () => {
       expect(res.body._id).toEqual(restaurantCreated._id)
     })
   })
+
+  it('PUT - update resturants by id', () => {
+    return request(app.getHttpServer())
+    .put(`/restaurants/${restaurantCreated._id}`)
+    .set('Authorization', 'Bearer ' + jwtToken)
+    .send({name: 'updated name'})
+    .expect(200)
+    .then((res) => {
+      expect(res.body).toBeDefined()
+      expect(res.body.name).toEqual('updated name')
+    })
+  })
+
+  it('DELETE - delete resturants by id', () => {
+    return request(app.getHttpServer())
+    .delete(`/restaurants/${restaurantCreated._id}`)
+    .set('Authorization', 'Bearer ' + jwtToken)
+    .expect(200)
+    .then((res) => {
+      expect(res.body).toBeDefined()
+      expect(res.body.deleted).toEqual(true)
+    })
+  })
 });

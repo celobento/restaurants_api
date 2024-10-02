@@ -59,6 +59,7 @@ export class RestaurantsController {
     }
 
     @Delete(':id')
+    @UseGuards(AuthGuard())
     async deleteRestaurant(
         @Param('id') id: string,
         @CurrentUser() user: User): Promise<{deleted: Boolean}> {
