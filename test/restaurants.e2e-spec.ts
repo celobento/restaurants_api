@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import * as mongoose from 'mongoose'
+import exp from 'constants';
 
 describe('RestaurantController (e2e)', () => {
   let app: INestApplication;
@@ -49,6 +50,7 @@ describe('RestaurantController (e2e)', () => {
   });
 
   let jwtToken
+  let restaurantCreated
 
   it('(GET) - login user', () => {
     return request(app.getHttpServer())
@@ -69,6 +71,28 @@ describe('RestaurantController (e2e)', () => {
       .expect(201)
       .then((res) => {
         expect(res.body._id).toBeDefined()
+        restaurantCreated = res.body
       });
   });
+
+  it('GET - get all resturants', () => {
+    return request(app.getHttpServer())
+    .get('/restaurants')
+    .set('Authorization', 'Bearer ' + jwtToken)
+    .expect(200)
+    .then((res) => {
+      expect(res.body.length).toBe(1)
+    })
+  })
+
+  it('GET - get all resturants by id', () => {
+    return request(app.getHttpServer())
+    .get(`/restaurants/${restaurantCreated._id}`)
+    .set('Authorization', 'Bearer ' + jwtToken)
+    .expect(200)
+    .then((res) => {
+      expect(res.body).toBeDefined()
+      expect(res.body._id).toEqual(restaurantCreated._id)
+    })
+  })
 });
