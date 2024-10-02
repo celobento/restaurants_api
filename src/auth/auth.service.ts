@@ -6,7 +6,7 @@ import { SignUpDto } from './dto/signup.dto';
 
 import * as bcrypt from 'bcryptjs'
 import { LoginDto } from './dto/login.dto';
-import APIFeatures from 'src/utils/apiFeatures.util';
+import APIFeatures from '../../src/utils/apiFeatures.util';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()

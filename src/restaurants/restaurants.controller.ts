@@ -6,10 +6,10 @@ import { RestaurantsService } from './restaurants.service';
 import { Restaurant } from './schemas/restaurant.schema';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { User } from 'src/auth/schemas/use.schema';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { CurrentUser } from '../../src/auth/decorators/current-user.decorator';
+import { User } from '../../src/auth/schemas/use.schema';
+import { RolesGuard } from '../../src/auth/guards/roles.guard';
+import { Roles } from '../../src/auth/decorators/roles.decorator';
 @Controller('restaurants')
 export class RestaurantsController {
     constructor(private restaurantsService: RestaurantsService){}

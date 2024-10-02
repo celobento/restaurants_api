@@ -1,7 +1,7 @@
 import { IsEmail, isEmail, IsEmpty, IsEnum, IsOptional, IsPhoneNumber, IsString, ValidationArguments } from "class-validator"
 import { Category } from "../schemas/restaurant.schema"
 import { BadRequestException, InternalServerErrorException } from "@nestjs/common"
-import { User } from "src/auth/schemas/use.schema"
+import { User } from "../../auth/schemas/use.schema"
 
 export class UpdateRestaurantDto {
 

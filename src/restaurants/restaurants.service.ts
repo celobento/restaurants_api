@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import * as mongoose from 'mongoose';
 import { Restaurant } from './schemas/restaurant.schema';
-import APIFeatures from 'src/utils/apiFeatures.util';
+import APIFeatures from '../../src/utils/apiFeatures.util';
 import { ignoreElements } from 'rxjs';
-import { User } from 'src/auth/schemas/use.schema';
+import { User } from '../../src/auth/schemas/use.schema';
 
 @Injectable()
 export class RestaurantsService {

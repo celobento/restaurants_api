@@ -1,7 +1,7 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
-import { User } from "src/auth/schemas/use.schema";
-import { Meal } from "src/meal/schema/meal.schema";
+import { User } from "../../auth/schemas/use.schema";
+import { Meal } from "../../meal/schema/meal.schema";
 
 export enum Category {
     FAST_FOOD = 'Fast Food',

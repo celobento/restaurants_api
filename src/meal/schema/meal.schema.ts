@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { User } from "aws-sdk/clients/budgets";
 import  * as mongoose  from "mongoose";
-import { Restaurant } from "src/restaurants/schemas/restaurant.schema";
 
 export enum Category {
     SOUP = 'Soup',

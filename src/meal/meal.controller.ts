@@ -2,9 +2,9 @@ import { Body, Controller, Delete, ForbiddenException, Get, Param, Post, Put, Us
 import { MealService } from './meal.service';
 import { Meal } from './schema/meal.schema';
 import { CreateMealDto } from './dto/meal.dto';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { CurrentUser } from '../../src/auth/decorators/current-user.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from 'src/auth/schemas/use.schema';
+import { User } from '../../src/auth/schemas/use.schema';
 import { UpdateMealDto } from './dto/update-meal.dto';
 
 @Controller('meals')
