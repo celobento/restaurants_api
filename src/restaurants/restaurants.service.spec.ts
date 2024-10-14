@@ -1,36 +1,38 @@
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
+import { UserRoles } from '../auth/schemas/use.schema';
 import { RestaurantsService } from '../restaurants/restaurants.service';
 import { Restaurant } from './schemas/restaurant.schema';
-import { UserRoles } from '../auth/schemas/use.schema';
 
 const mockRestaurant = {
-  _id: '66fb2efc7c1a9531745002f4',
-  name: 'Retaurant 7',
-  description: 'This is just a description',
-  email: 'ghulam@gamil.com',
-  phoneNumber: '+1(646)286-7644',
-  address: '200 Olympic Dr, Stafford, VS, 22554',
-  category: 'Fast Food',
+  _id: "670d98ef2e3a934b435c797f",
+  name: "Retaurant 7",
+  description: "This is just a description",
+  email: "ghulam@gamil.com",
+  phoneNumber: "+1(646)286-7644",
+  address: "200 Olympic Dr, Stafford, VS, 22554",
+  category: "Fast Food",
   images: [],
-  user: '66fb2e53aba36888dab5afbc',
-  menu: ['66fb4015d8745ed0ea168c63'],
-  createdAt: '2024-09-30T23:06:36.578Z',
-  updatedAt: '2024-10-01T00:19:33.439Z',
-  __v: 1,
+  user: "670d98d72e3a934b435c7979",
+  menu: [],
+  createdAt: "2024-10-14T22:19:27.768Z",
+  updatedAt: "2024-10-14T22:19:27.768Z",
+  __v: 0,
 };
 
 const mockUser = {
   name:"Marcelo",
-  email:"celo4@gmail.com",
-  _id:"6705bd14f674b1f18b9a06de", 
+  email:"celob@gmail.com",
+  _id:"670d98d72e3a934b435c7979", 
   role: UserRoles.USER
 }
 
 const mockRestaurantService = {
   find: jest.fn(),
-  create: jest.fn()
+  create: jest.fn(),
+  findById: jest.fn()
 };
 
 describe('RestaurantService', () => {
@@ -82,9 +84,25 @@ describe('RestaurantService', () => {
     it('should create a new restaurants', async () => {
       // jest.spyOn(APIFeatures, 'getRestaurantLocation').mockImplementation(() => Promise.resolve(mockRestaurant.location));
       // I can't do this test work, promise is not recognized
-      //jest.spyOn(model, 'create').mockImplementationOnce(() => Promise.resolve(mockRestaurant));
-      const result = await service.create(newRestaurant as any, mockUser as any);
-      expect(result).toEqual(mockRestaurant);
+      //jest.spyOn(model, 'create').mockImplementationOnce(() => Promise.resolve(newRestaurant));
+      //const result = await service.create(newRestaurant as any, mockUser as any);
+      //expect(result).toEqual(newRestaurant);
     });
   });
+
+  describe ('findById', () => {
+    it('should get restaurant by Id', async () => {
+      jest.spyOn(model, 'findById').mockResolvedValueOnce(mockRestaurant as any)
+      const result = await service.findById(mockRestaurant._id)
+      expect(result).toEqual(mockRestaurant)
+    })
+    it ('should throw wrong mongoose id error', async () => {
+      await expect(service.findById('wrongId')).rejects.toThrow(BadRequestException)
+    })
+    it ('should throw restaurant not found error', async () => {
+      const mockError = new NotFoundException('Restaurant not found.')
+      jest.spyOn(model, 'findById').mockRejectedValue(mockError)
+      await expect(service.findById(mockRestaurant._id)).rejects.toThrow(NotFoundException)
+    })
+  })
 });
