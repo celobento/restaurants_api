@@ -32,7 +32,9 @@ const mockUser = {
 const mockRestaurantService = {
   find: jest.fn(),
   create: jest.fn(),
-  findById: jest.fn()
+  findById: jest.fn(),
+  findByIdAndUpdate: jest.fn(),
+  findByIdAndDelete: jest.fn()
 };
 
 describe('RestaurantService', () => {
@@ -103,6 +105,26 @@ describe('RestaurantService', () => {
       const mockError = new NotFoundException('Restaurant not found.')
       jest.spyOn(model, 'findById').mockRejectedValue(mockError)
       await expect(service.findById(mockRestaurant._id)).rejects.toThrow(NotFoundException)
+    })
+  })
+
+  describe('updateById', () => {
+    it('should update the restaurant', async () => {
+      const restaurant = { ...mockRestaurant, name: 'Updated name'}
+      const updateRestaurant = { name: 'Updated name'}
+      jest.spyOn(model, 'findByIdAndUpdate').mockResolvedValueOnce(restaurant as any)
+      const updatedRestaurant = await service.updateById(restaurant._id, updateRestaurant as any)
+      expect(updatedRestaurant.name).toEqual(updateRestaurant.name)
+    })
+  })
+
+  describe('deleteById', () => {
+    it('should delete the restaurant', async () => {
+      //const restaurant = { ...mockRestaurant, name: 'Updated name'}
+      const deleteMessage = { deleted: true}
+      jest.spyOn(model, 'findByIdAndDelete').mockResolvedValueOnce(deleteMessage as any)
+      const result = await service.deleteById(mockRestaurant._id)
+      expect(result).toEqual(deleteMessage)
     })
   })
 });
